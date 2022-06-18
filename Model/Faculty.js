@@ -25,8 +25,19 @@ const facultySchema = new Schema({
   profile: {
     type: String
   },
-  status: Number
+  status: Number,
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
+
+facultySchema.set("toObject", { virtuals: true });
+facultySchema.set("toJSON", { virtuals: true });
 
 const Faculty = mongoose.model('Faculty', facultySchema);
 module.exports = Faculty;

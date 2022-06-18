@@ -17,8 +17,19 @@ const adminSchema = new Schema({
     type: String,
     required: [true, "password is compulsory to be entered"]
   },
-  status: Number
+  status: Number,
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
+
+adminSchema.set("toObject", { virtuals: true });
+adminSchema.set("toJSON", { virtuals: true });
 
 const Admin = mongoose.model('Admin', adminSchema);
 module.exports = Admin;

@@ -25,6 +25,7 @@ router.get('/alladmin', adminAuthController.protect, adminController.allAdmin);
 
 router.post('/addfaculty', adminAuthController.protect, upload.single('faculty'), adminController.addFaculty);
 router.get('/deletefaculty', adminAuthController.protect, adminController.removeFaculty);
+router.post('/editfaculty', adminAuthController.protect, adminController.editFaculty)
 router.get('/allfaculty', adminAuthController.protect, adminController.allFaculty);
 router.get('/faculty', adminAuthController.protect, adminController.Faculty);
 
@@ -39,10 +40,13 @@ router.post('/addcourses', adminAuthController.protect, adminController.addCours
 router.get('/allcourses', adminAuthController.protect, adminController.allCourses)
 router.get('/course', adminAuthController.protect, adminController.Course)
 router.get('/deletecourse', adminAuthController.protect, adminController.deleteCourse)
+router.post('/course/edit', adminAuthController.protect, adminController.editCourse)
+
 
 router.post('/addstudent', adminAuthController.protect, upload.single('profile'), adminController.addstudent)
 router.get('/allstudents', adminAuthController.protect, adminController.allstudent)
 router.get('/deletestudent', adminAuthController.protect, adminController.deleteStudent)
+router.post('/editstudent', adminAuthController.protect,upload.single('profile'), adminController.editStudent)
 router.get('/student', adminAuthController.protect, adminController.student)
 
 router.post('/login', adminAuthController.Login);

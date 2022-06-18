@@ -12,10 +12,23 @@ const CoursesSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'SubCourse'
    }],
-  status: Number
+   duration: {
+    type: String,
+    required: [true, 'Courser duratio is compulsory to be entered']
+   },
+  status: Number,
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
+  UpdatedAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
-
+CoursesSchema.set("toObject", { virtuals: true });
+CoursesSchema.set("toJSON", { virtuals: true });
 
 const Courses = mongoose.model('Courses', CoursesSchema);
 

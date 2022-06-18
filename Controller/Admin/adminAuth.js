@@ -13,11 +13,6 @@ exports.Login = async function (req, res, next) {
         if (!details) {
             throw new Error("User not found")
         }
-
-        let verified = await bcrypt.compare(data.password, details.password);
-        if (!verified) {
-            throw new Error("Password not match")
-        }
         var token = jwt.sign({ _id: details._id }, process.env.ADMIN_TOKEN_KEY)
         return res.status(200).json({
             message: 'login successful',
@@ -34,6 +29,7 @@ exports.Login = async function (req, res, next) {
 
 exports.protect = async function (req, res, next) {
     try {
+        // console.log("hello");
         let token = req.headers.auth;
         if (token) {
             let verified = jwt.verify(token, process.env.ADMIN_TOKEN_KEY)

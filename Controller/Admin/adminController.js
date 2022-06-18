@@ -103,7 +103,7 @@ exports.addFaculty = async function (req, res, next) {
         // console.log(req.file);
         data.status = 1
         if (data && req.file) {
-            data.password = await bcrypt.hash(data.password, 8)
+            // data.password = await bcrypt.hash(data.password, 8)
             data.profile = req.file.filename
             let details = await Faculty.create(data);
             if (!details) {
@@ -172,6 +172,27 @@ exports.removeFaculty = async function (req, res, next) {
     }
 }
 
+exports.editFaculty = async function (req, res, next) {
+    try {
+        let id = req.query.id
+        let data = { ...req.body }
+        if (!id || !data) {
+            throw new Error('Id was not found')
+        }
+        else {
+            await Faculty.findByIdAndUpdate(id, data)
+            return res.status(200).json({
+                message: 'Data Update Success'
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({
+            message: error.message
+        })
+    }
+}
+
 exports.Faculty = async function (req, res, next) {
     try {
         let id = req.query.id
@@ -205,7 +226,7 @@ exports.addSubCourses = async function (req, res, next) {
             throw new Error('No Input Data Found')
         }
         else {
-                
+
             let subCourses = await SubCourse.create(data)
             return res.status(200).json({
                 subCourses,
@@ -227,10 +248,10 @@ exports.allSubCourses = async function (req, res, next) {
         //     throw new Error('No details found from backend')
         // }
         // else {
-            return res.status(200).json({
-                details,
-                message: "data Found"
-            })
+        return res.status(200).json({
+            details,
+            message: "data Found"
+        })
         // }
     } catch (error) {
         console.log(error);
@@ -402,6 +423,29 @@ exports.deleteCourse = async function (req, res, next) {
     }
 }
 
+exports.editCourse = async function (req, res, next) {
+    try {
+        console.log("hello");
+        let id = req.query.id
+        let data = { ...req.body }
+        if (!id || !data) {
+            throw new Error('ID Was Not Found')
+        }
+        else {
+            let details = await Courses.findByIdAndUpdate(id, data)
+            return res.status(200).json({
+                message: 'Edit Data Success',
+                details
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({
+            message: error.message
+        })
+    }
+}
+
 
 
 
@@ -412,37 +456,37 @@ exports.addstudent = async function (req, res, next) {
         let data = { ...req.body }
         // console.log(req.body);
         // console.log(data);
-        data.subcourse = JSON.parse(data.subcourse)
+        // data.subcourse = JSON.parse(data.subcourse)
         console.log(data);
-        
-        if(!data){
+
+        if (!data) {
             throw new Error('Data was not found')
         }
-        else{
+        else {
             // let parsedData = JSON.parse(data)
             // console.log(parsedData);
-            data.profile = req.file.filename 
+            data.profile = req.file.filename
 
             // data.topic = 
-            let subCourseDetails = await SubCourse.find({_id : { "$in": data.subcourse }})
+            let subCourseDetails = await SubCourse.find({ _id: { "$in": data.subcourse } })
             // console.log(subCourseDetails);
 
             let newAllTopicArray = []
             subCourseDetails.map((e) => {
-                let newTopicObj = {subcourse: e.subCourse}
+                let newTopicObj = { subcourse: e.subCourse }
                 let newTopicsArray = []
                 e.topic.map((ele, i) => {
-                    return newTopicsArray.push({name: ele, remark: ''})
+                    return newTopicsArray.push({ name: ele, remark: '' })
                 })
                 newTopicObj['topics'] = newTopicsArray
-               return newAllTopicArray.push(newTopicObj)
+                return newAllTopicArray.push(newTopicObj)
             })
             console.log(newAllTopicArray);
             // console.log(data.subcourse);
             // console.log(data);
             data.topic = [...newAllTopicArray]
 
-            
+
 
             let details = await Student.create(data)
             return res.status(200).json({
@@ -462,10 +506,10 @@ exports.addstudent = async function (req, res, next) {
 exports.allstudent = async function (req, res, next) {
     try {
         let details = await Student.find().populate('courseName faculty')
-        if(!details){
+        if (!details) {
             throw new Error('Details not found')
         }
-        else{
+        else {
             return res.status(200).json({
                 details
             })
@@ -481,16 +525,41 @@ exports.allstudent = async function (req, res, next) {
 
 exports.deleteStudent = async function (req, res, next) {
     try {
-       let id = req.query.id
-       if(!id) {
-           throw new Error('Id Was Not Found')
-       }
-       else{
-           await Student.findByIdAndDelete(id)
-           return res.status(200).json({
-               message: 'delete successfull'
-           })
-       }
+        let id = req.query.id
+        if (!id) {
+            throw new Error('Id Was Not Found')
+        }
+        else {
+            await Student.findByIdAndDelete(id)
+            return res.status(200).json({
+                message: 'delete successfull'
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({
+            message: error.message
+        })
+    }
+}
+
+exports.editStudent = async function (req, res, next) {
+    try {
+        let id = req.query.id
+        let data = {...req.body}
+        if (!id || !data) {
+            throw new Error('Id Was Not Found')
+        }
+        //  console.log(req.files);   
+        if(req.file){
+            data.profile = req.file.filename
+        }
+        console.log(data);
+            await Student.findByIdAndUpdate(id, data)
+            return res.status(200).json({
+                message: 'update successfull'
+            })
+        
     } catch (error) {
         console.log(error);
         return res.status(404).json({

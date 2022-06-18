@@ -1,6 +1,7 @@
 const { status } = require('express/lib/response');
 let mongoose = require('mongoose')
 const Schema = mongoose.Schema;
+const schemaPlugin = require('./plugin/schemaPlugin')
 // const ObjectId = Schema.ObjectId;
 
 const topicSchema = new Schema({
@@ -16,21 +17,52 @@ const topicSchema = new Schema({
         enum: [true, false],
         default: false
     },
+    uploadDate: Date,
     workImages: [{
         type: String,
         validate: [arrayLimit, "max 10 image upload"]
     }],
-    
+    createdAt: {
+        type: Date,
+        default: Date.now(),
+    },
+    UpdatedAt: {
+        type: Date,
+        default: Date.now(),
+    }
 })
 
-function arrayLimit(value){
+topicSchema.pre('save', function(next) {
+    this.UpdatedAt = Date.now();
+    return next();
+});
+
+
+
+function arrayLimit(value) {
     return value.length <= 10
 }
 
+topicSchema.plugin(schemaPlugin)
+
 const subCourseSchema = new Schema({
     subcourse: String,
-    topics: [topicSchema]
+    topics: [topicSchema],
+    createdAt: {
+        type: Date,
+        default: Date.now(),
+    },
+    UpdatedAt: {
+        type: Date,
+        default: Date.now(),
+    },
 })
+
+
+subCourseSchema.pre('save', function(next) {
+    this.UpdatedAt = Date.now();
+    return next();
+});
 
 
 const studentSchema = new Schema({
@@ -50,16 +82,12 @@ const studentSchema = new Schema({
         type: Date,
         required: [true, "Joining Date not Entered"]
     },
-    endDate: {
-        type: Date,
-        required: [true, "End Date is Not Entered"]
-    },
     mobile: {
         type: Number,
         maxlength: 12,
         minlength: 10
     },
-    workingHours: Number,
+    workingHours: String,
     courseName: {
         type: Schema.Types.ObjectId,
         ref: 'Courses'
@@ -87,8 +115,26 @@ const studentSchema = new Schema({
     city: String,
     state: String,
     zip: Number,
-    profile: String
+    profile: String,
+    createdAt: {
+        type: Date,
+        default: Date.now(),
+    },
+    UpdatedAt: {
+        type: Date,
+        default: Date.now(),
+    },
 });
+
+studentSchema.pre('save', function(next) {
+    this.UpdatedAt = Date.now();
+    return next();
+});
+
+studentSchema.set("toObject", { virtuals: true });
+studentSchema.set("toJSON", { virtuals: true });
+
+
 
 const Student = mongoose.model('Student', studentSchema);
 module.exports = Student;

@@ -9,28 +9,27 @@ exports.studentWorkUpdate = async function (req, res, next) {
         if (!id || !data) {
             throw new Error('Id Or Data Were Not Found')
         }
-        else {
-            console.log(req.files);
-            // console.log(JSON.parse(data.ele));
-            data.ele = JSON.parse(data.ele)
-            data.subCourse = JSON.parse(data.subCourse)
-            data.ele.student = true
-            data.ele.workImages = req.files.workImages.map((e) => {
-                return e.filename
-            })
-            // data.topics[data.i] = data.ele
-            // data.ele.workImages
-            console.log(data);
-            await Student.find({ 'subcourse': data.subCourse })
-
-            // console.log(JSON.parse(data.subCourse));
-
-            await Student.findByIdAndUpdate(id, { $set: { "topic.$[a].topics.$[b]": data.ele } }, { "arrayFilters": [{ 'a._id': data.subCourse._id }, { 'b._id': data.ele._id }] })
-            let details = await Student.findById(id)
-            return res.status(200).json({
-                details
-            })
-        }
+        // console.log(req.files);
+        data.ele = JSON.parse(data.ele)
+        data.subCourse = JSON.parse(data.subCourse)
+        data.ele.student = true
+        // data.ele.uploadDate = new Date();
+        let today = new Date()
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+        today = yyyy + '/' + mm + '/' + dd;
+        data.ele.uploadDate = today
+        data.ele.workImages = req.files.workImages.map((e) => {
+            return e.filename
+        })
+        // console.log(data);
+        // await Student.find({ 'subcourse': data.subCourse })
+        await Student.findByIdAndUpdate(id, { $set: { "topic.$[a].topics.$[b]": data.ele } }, { "arrayFilters": [{ 'a._id': data.subCourse._id }, { 'b._id': data.ele._id }] })
+        let details = await Student.findById(id)
+        return res.status(200).json({
+            details
+        })
     } catch (error) {
         console.log(error);
         return res.status(404).json({
@@ -49,7 +48,7 @@ exports.remarkSubmit = async function (req, res, next) {
         }
         else {
             console.log(data);
-            await Student.findByIdAndUpdate(id, { $set: { "topic.$[c].topics.$[d].remark": data.value } }, { "arrayFilters": [{ 'c._id': data.subCourse._id }, {'d._id': data.ele._id}] })
+            await Student.findByIdAndUpdate(id, { $set: { "topic.$[c].topics.$[d].remark": data.value } }, { "arrayFilters": [{ 'c._id': data.subCourse._id }, { 'd._id': data.ele._id }] })
             return res.status(200).json({
                 message: 'update successful'
             })
