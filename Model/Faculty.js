@@ -1,5 +1,6 @@
 const { status } = require('express/lib/response');
 let mongoose = require('mongoose')
+let schemaPlugin = require('./plugin/schemaPlugin')
 const Schema = mongoose.Schema;
 // const ObjectId = Schema.ObjectId;
 
@@ -38,6 +39,13 @@ const facultySchema = new Schema({
 
 facultySchema.set("toObject", { virtuals: true });
 facultySchema.set("toJSON", { virtuals: true });
+
+facultySchema.pre('save', function(next) {
+  this.UpdatedAt = Date.now();
+  return next();
+});
+
+facultySchema.plugin(schemaPlugin)
 
 const Faculty = mongoose.model('Faculty', facultySchema);
 module.exports = Faculty;

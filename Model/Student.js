@@ -24,44 +24,48 @@ const topicSchema = new Schema({
     }],
     createdAt: {
         type: Date,
-        default: Date.now(),
     },
     UpdatedAt: {
         type: Date,
-        default: Date.now(),
     }
 })
 
-topicSchema.pre('save', function(next) {
-    this.UpdatedAt = Date.now();
-    return next();
-});
+topicSchema.pre('save', function(next){
+    now = new Date();
+    UpdatedAt = now;
+    if ( !this.createdAt ) {
+      this.createdAt = now;
+    }
+    next();
+  });
 
+// topicSchema.plugin(schemaPlugin)
 
 
 function arrayLimit(value) {
     return value.length <= 10
 }
 
-topicSchema.plugin(schemaPlugin)
 
 const subCourseSchema = new Schema({
     subcourse: String,
     topics: [topicSchema],
     createdAt: {
         type: Date,
-        default: Date.now(),
     },
     UpdatedAt: {
         type: Date,
-        default: Date.now(),
     },
 })
 
 
 subCourseSchema.pre('save', function(next) {
-    this.UpdatedAt = Date.now();
-    return next();
+    now = new Date();
+    this.UpdatedAt = now;
+    if ( !this.createdAt ) {
+      this.createdAt = now;
+    }
+    next();
 });
 
 
@@ -118,17 +122,19 @@ const studentSchema = new Schema({
     profile: String,
     createdAt: {
         type: Date,
-        default: Date.now(),
     },
     UpdatedAt: {
         type: Date,
-        default: Date.now(),
     },
 });
 
 studentSchema.pre('save', function(next) {
-    this.UpdatedAt = Date.now();
-    return next();
+    now = new Date();
+    this.UpdatedAt = now;
+    if ( !this.createdAt ) {
+      this.createdAt = now;
+    }
+    next();
 });
 
 studentSchema.set("toObject", { virtuals: true });

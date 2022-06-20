@@ -14,11 +14,7 @@ exports.studentWorkUpdate = async function (req, res, next) {
         data.subCourse = JSON.parse(data.subCourse)
         data.ele.student = true
         // data.ele.uploadDate = new Date();
-        let today = new Date()
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        var yyyy = today.getFullYear();
-        today = yyyy + '/' + mm + '/' + dd;
+        let today = Date.now()
         data.ele.uploadDate = today
         data.ele.workImages = req.files.workImages.map((e) => {
             return e.filename
