@@ -555,7 +555,7 @@ exports.editStudent = async function (req, res, next) {
             data.profile = req.file.filename
         }
         console.log(data);
-            await Student.findByIdAndUpdate(id, data)
+            await Student.findByIdAndUpdate(id, {$set: data})
             return res.status(200).json({
                 message: 'update successfull'
             })
@@ -584,6 +584,30 @@ exports.student = async function (req, res, next) {
                     details
                 })
             }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({
+            message: error.message
+        })
+    }
+}
+
+exports.resetWork = async function (req, res, next) {
+    try {
+        let id = req.query.id
+        let data = { ...req.body }
+        if (!id) {
+            throw new Error('ID Was Not Found')
+        }
+        else {
+            data.ele = JSON.parse(data.ele)
+            data.subCourse = JSON.parse(data.subCourse)
+            await Student.findByIdAndUpdate(id, {
+                $set: { "topic.$[a].topics.$[b].workImages": [] }
+            }, {
+                "arrayFilters": [{ 'a._id': data.subCourse._id }, { 'b._id': data.ele._id }]
+            })
         }
     } catch (error) {
         console.log(error);

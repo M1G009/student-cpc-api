@@ -84,7 +84,10 @@ exports.work = async function (req, res, next) {
             throw new Error("Please check all id's")
         }
 
-        let details = await Student.findByIdAndUpdate(id, { $set: { 'topic.$[a].topics.$[b].faculty': checked } }, { "arrayFilters": [{ 'a._id': subCourseId }, { 'b._id': topicId }] })
+        let today = Date.now()
+        console.log(today);
+
+        let details = await Student.findByIdAndUpdate(id, { $set: { 'topic.$[a].topics.$[b].faculty': checked ,  'topic.$[a].topics.$[b].facultyCheckDate':today } }, { "arrayFilters": [{ 'a._id': subCourseId }, { 'b._id': topicId }] })
         return res.status(200).json({
             message: 'update success',
             data: details

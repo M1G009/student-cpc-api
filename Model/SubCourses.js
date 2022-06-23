@@ -6,7 +6,8 @@ const Schema = mongoose.Schema;
 const subcourseSchema = new Schema({
   subCourse: {
     type: String,
-    required: [true, "Please Enter SubCourse name"]
+    required: [true, "Please Enter SubCourse name"],
+    unique: [true, 'The Same SubCourse Already Exists']
   },
   topic: [{
     type: String,

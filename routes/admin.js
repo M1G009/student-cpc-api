@@ -3,6 +3,7 @@ const multer = require('multer')
 var router = express.Router();
 var adminController = require('../Controller/Admin/adminController')
 var adminAuthController = require('../Controller/Admin/adminAuth')
+let studentController = require('../Controller/Student/studentController')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -48,6 +49,8 @@ router.get('/allstudents', adminAuthController.protect, adminController.allstude
 router.get('/deletestudent', adminAuthController.protect, adminController.deleteStudent)
 router.post('/editstudent', adminAuthController.protect,upload.single('profile'), adminController.editStudent)
 router.get('/student', adminAuthController.protect, adminController.student)
+
+router.post('/resetwork', adminAuthController.protect, adminController.resetWork)
 
 router.post('/login', adminAuthController.Login);
 

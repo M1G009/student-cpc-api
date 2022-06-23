@@ -7,39 +7,30 @@ const schemaPlugin = require('./plugin/schemaPlugin')
 const topicSchema = new Schema({
     name: String,
     remark: String,
-    student: {
-        type: Boolean,
-        enum: [true, false],
-        default: false
-    },
     faculty: {
         type: Boolean,
         enum: [true, false],
         default: false
     },
     uploadDate: Date,
+    facultyCheckDate: Date,
     workImages: [{
         type: String,
         validate: [arrayLimit, "max 10 image upload"]
     }],
     createdAt: {
-        type: Date,
+        type: {type: Date, default:  Date.now()}
     },
     UpdatedAt: {
-        type: Date,
+        type: {type: Date, default: Date.now()}
     }
 })
 
-topicSchema.pre('save', function(next){
-    now = new Date();
-    UpdatedAt = now;
-    if ( !this.createdAt ) {
-      this.createdAt = now;
-    }
+topicSchema.pre('findByIdAndUpdate', function (next){
+    console.log("this.UpdatedAt", this);
+    this.uploadDate =  Date.now();
     next();
   });
-
-// topicSchema.plugin(schemaPlugin)
 
 
 function arrayLimit(value) {

@@ -6,7 +6,8 @@ const Schema = mongoose.Schema;
 const CoursesSchema = new Schema({
   name: {
     type: String,
-    required: [true, 'Name IS Required']
+    required: [true, 'Name IS Required'],
+    unique: [true, 'The same Course Name Already Exists']
   },
   subcourses: [{ 
     type: mongoose.Schema.Types.ObjectId,

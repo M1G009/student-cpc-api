@@ -2,26 +2,29 @@ const Student = require('../../Model/Student');
 
 exports.studentWorkUpdate = async function (req, res, next) {
     try {
-        // console.log('multer pass');
         let data = { ...req.body }
         let id = req.headers.id
-        // console.log(req.files);
         if (!id || !data) {
             throw new Error('Id Or Data Were Not Found')
         }
-        // console.log(req.files);
         data.ele = JSON.parse(data.ele)
         data.subCourse = JSON.parse(data.subCourse)
         data.ele.student = true
-        // data.ele.uploadDate = new Date();
         let today = Date.now()
         data.ele.uploadDate = today
+
+        // let preWorkImages = await Student.findById(id, {$get: {"topic.$[a].topics.$[b].workImages": }})
+
         data.ele.workImages = req.files.workImages.map((e) => {
             return e.filename
         })
-        // console.log(data);
-        // await Student.find({ 'subcourse': data.subCourse })
-        await Student.findByIdAndUpdate(id, { $set: { "topic.$[a].topics.$[b]": data.ele } }, { "arrayFilters": [{ 'a._id': data.subCourse._id }, { 'b._id': data.ele._id }] })
+
+        await Student.findByIdAndUpdate(id, {
+            $set: { "topic.$[a].topics.$[b].uploadDate": data.ele.uploadDate },
+            $push: { "topic.$[a].topics.$[b].workImages": data.ele.workImages }
+        }, {
+            "arrayFilters": [{ 'a._id': data.subCourse._id }, { 'b._id': data.ele._id }]
+        })
         let details = await Student.findById(id)
         return res.status(200).json({
             details
@@ -73,6 +76,31 @@ exports.student = async function (req, res, next) {
                     details
                 })
             }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({
+            message: error.message
+        })
+    }
+}
+
+
+exports.resetWork = async function (req, res, next) {
+    try {
+        let id = req.headers.id
+        let data = { ...req.body }
+        if (!id) {
+            throw new Error('ID Was Not Found')
+        }
+        else {
+            data.ele = JSON.parse(data.ele)
+            data.subCourse = JSON.parse(data.subCourse)
+            await Student.findByIdAndUpdate(id, {
+                $set: { "topic.$[a].topics.$[b].workImages": [] }
+            }, {
+                "arrayFilters": [{ 'a._id': data.subCourse._id }, { 'b._id': data.ele._id }]
+            })
         }
     } catch (error) {
         console.log(error);
