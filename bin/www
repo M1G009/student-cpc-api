@@ -5,7 +5,10 @@
  */
 
 var app = require('../app');
+var Faculty = require('../Model/Faculty')
+var Student = require('../Model/Student')
 var debug = require('debug')('api:server');
+const cors = require("cors");
 var http = require('http');
 
 /**
@@ -20,6 +23,104 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:3000", "http://localhost:3001"],
+  }
+});
+
+
+
+
+
+
+
+
+
+
+// ---------------------------------------------------------------------------------SOCKET CODE----------------------------------------
+
+io.on('connection', (socket) => {
+  // console.log(socket);
+
+
+
+  // -----------------------------------------------------------------------------Message Recievers Id---------------------------
+
+  socket.on('id', async (toid) => {
+    let toId = JSON.parse(toid)
+    let facultyDetails = await Faculty.findById(toId)
+    if (facultyDetails) {
+      Faculty.findById(toId).then((results) => {
+        socket.emit('pre-chat', results)
+      })
+    }
+    else {
+      Student.findById(toId).then((results) => {
+        socket.emit('pre-chat', results)
+      })
+    }
+    // console.log("Data Collected");
+  })
+
+
+
+  // -----------------------------------------------------------------------------All Process When Chat Is Sent-----------------------------
+
+  socket.on('chat message', async (msg, id, toid, name) => {
+    let details = {}
+    details.message = msg
+    details.from = name
+    let userId = JSON.parse(id)
+    let toId = JSON.parse(toid)
+
+
+
+    // ------------------------------------------------------------------------------Update Code---------------------------------------------
+
+    let studentupdate = await Student.findByIdAndUpdate(toId, { $push: { chats: details } });
+    if (!studentupdate) {
+      await Faculty.findByIdAndUpdate(toId, { $push: { chats: details } })
+    }
+    let facultyUpdate = await Faculty.findByIdAndUpdate(userId, { $push: { chats: details } })
+    if (!facultyUpdate) {
+      await Student.findByIdAndUpdate(userId, { $push: { chats: details } })
+    }
+
+
+    // ------------------------------------------------------------------------------Emit Previos Chat Code-----------------------------
+
+    let facultyDetails = await Faculty.findById(toId)
+    if (facultyDetails) {
+      Faculty.findById(toId).then((results) => {
+        io.emit('pre-chat', results)
+      })
+      Student.findById(userId).then((results) => {
+        io.emit('pre-chat', results)
+      })
+    }
+    else {
+      Student.findById(toId).then((results) => {
+        io.emit('pre-chat', results)
+      })
+      Faculty.findById(userId).then((results) => {
+        io.emit('pre-chat', results)
+      })
+    }
+    io.emit('chat message', msg);
+  });
+});
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Listen on provided port, on all network interfaces.

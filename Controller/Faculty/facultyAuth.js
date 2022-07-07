@@ -4,7 +4,7 @@ let bcrypt = require('bcrypt')
 
 exports.Login = async function (req, res, next) {
     try {
-        console.log("error");
+        // console.log("error");
         let data = { ...req.body }
         if (!data.email || !data.password) {
             throw new Error("Please enter valid fields")

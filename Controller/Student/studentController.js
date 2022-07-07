@@ -1,4 +1,5 @@
 const Student = require('../../Model/Student');
+const Faculty = require('../../Model/Faculty')
 
 exports.studentWorkUpdate = async function (req, res, next) {
     try {
@@ -40,13 +41,13 @@ exports.studentWorkUpdate = async function (req, res, next) {
 exports.remarkSubmit = async function (req, res, next) {
     try {
         let data = { ...req.body }
-        console.log(req.body);
+        // console.log(req.body);
         let id = req.headers.id
         if (!id || !data) {
             throw new Error('Id Or Data Were Not Found')
         }
         else {
-            console.log(data);
+            // console.log(data);
             await Student.findByIdAndUpdate(id, { $set: { "topic.$[c].topics.$[d].remark": data.value } }, { "arrayFilters": [{ 'c._id': data.subCourse._id }, { 'd._id': data.ele._id }] })
             return res.status(200).json({
                 message: 'update successful'
@@ -102,6 +103,24 @@ exports.resetWork = async function (req, res, next) {
                 "arrayFilters": [{ 'a._id': data.subCourse._id }, { 'b._id': data.ele._id }]
             })
         }
+    } catch (error) {
+        console.log(error);
+        return res.status(404).json({
+            message: error.message
+        })
+    }
+}
+
+
+exports.allFaculty = async function (req, res, next) {
+    try {
+        let details = await Faculty.find()
+        if(!details){
+            throw new Error('No Faculty Found')
+        }       
+        return res.status(200).json({
+            details
+        }) 
     } catch (error) {
         console.log(error);
         return res.status(404).json({

@@ -19,18 +19,18 @@ const topicSchema = new Schema({
         validate: [arrayLimit, "max 10 image upload"]
     }],
     createdAt: {
-        type: {type: Date, default:  Date.now()}
+        type: { type: Date, default: Date.now() }
     },
     UpdatedAt: {
-        type: {type: Date, default: Date.now()}
+        type: { type: Date, default: Date.now() }
     }
 })
 
-topicSchema.pre('findByIdAndUpdate', function (next){
+topicSchema.pre('findByIdAndUpdate', function (next) {
     console.log("this.UpdatedAt", this);
-    this.uploadDate =  Date.now();
+    this.uploadDate = Date.now();
     next();
-  });
+});
 
 
 function arrayLimit(value) {
@@ -50,11 +50,11 @@ const subCourseSchema = new Schema({
 })
 
 
-subCourseSchema.pre('save', function(next) {
+subCourseSchema.pre('save', function (next) {
     now = new Date();
     this.UpdatedAt = now;
-    if ( !this.createdAt ) {
-      this.createdAt = now;
+    if (!this.createdAt) {
+        this.createdAt = now;
     }
     next();
 });
@@ -117,13 +117,17 @@ const studentSchema = new Schema({
     UpdatedAt: {
         type: Date,
     },
+    chats: [{
+        message: String,
+        from: String,
+    }]
 });
 
-studentSchema.pre('save', function(next) {
+studentSchema.pre('save', function (next) {
     now = new Date();
     this.UpdatedAt = now;
-    if ( !this.createdAt ) {
-      this.createdAt = now;
+    if (!this.createdAt) {
+        this.createdAt = now;
     }
     next();
 });

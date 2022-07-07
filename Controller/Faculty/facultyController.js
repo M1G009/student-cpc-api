@@ -85,7 +85,7 @@ exports.work = async function (req, res, next) {
         }
 
         let today = Date.now()
-        console.log(today);
+        // console.log(today);
 
         let details = await Student.findByIdAndUpdate(id, { $set: { 'topic.$[a].topics.$[b].faculty': checked ,  'topic.$[a].topics.$[b].facultyCheckDate':today } }, { "arrayFilters": [{ 'a._id': subCourseId }, { 'b._id': topicId }] })
         return res.status(200).json({

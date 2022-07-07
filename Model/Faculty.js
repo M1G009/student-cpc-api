@@ -26,6 +26,10 @@ const facultySchema = new Schema({
   profile: {
     type: String
   },
+  chats: [{
+    message: String,
+    from: String
+  }],
   status: Number,
   createdAt: {
     type: Date,

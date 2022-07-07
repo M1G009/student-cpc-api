@@ -18,8 +18,15 @@ const storage = multer.diskStorage({
   const upload = multer({ storage: storage })
 
 router.post('/studentupdate', studentAuth.protect,upload.fields([{ name: 'workImages', maxCount: 10 }]), studentController.studentWorkUpdate)
+
 router.post('/remark', studentAuth.protect, studentController.remarkSubmit)
+
 router.get('/student', studentAuth.protect, studentController.student)
+
+router.get('/allfaculty', studentAuth.protect, studentController.allFaculty)
+
 router.post('/resetwork', studentAuth.protect, studentController.resetWork)
+
 router.post('/login', studentAuth.Login)
+
 module.exports = router;
